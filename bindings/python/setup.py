@@ -11,15 +11,16 @@
 from distutils.core import setup
 import sys
 
-if (not sys.version_info[0] is 3):
-    sys.exit('libmsym module requires python 3')
-    
-setup(name='libmsym',
-      version='0.2.4',
-      description = 'libmsym python binding',
-      license='MIT',
-      author='Marcus Johansson',
-      author_email='mcodev31@gmail.com',
-      url='https://github.com/mcodev31/libmsym',
-      packages=['libmsym']
-      )
+if sys.version_info[0] != 3:
+    sys.exit("libmsym module requires python 3")
+
+setup(
+    name="libmsym",
+    version="0.2.4",
+    description="libmsym python binding",
+    license="MIT",
+    author="Marcus Johansson",
+    author_email="mcodev31@gmail.com",
+    url="https://github.com/mcodev31/libmsym",
+    packages=["libmsym"],
+)

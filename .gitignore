@@ -1,13 +1,4 @@
-build
+/__pycache__
 
 *.swp
-*.exe
-*.dll
-*.do
-*.o
-*.obj
-*.so
-*.dylib
-*.dSYM
-
 .DS_Store

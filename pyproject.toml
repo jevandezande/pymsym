@@ -1,0 +1,26 @@
+[project]
+name = "pymsym"
+version = "0.2.4"
+description = "libmsym python binding"
+authors = [{name = "Corin Wagen", email = "corinwagen@gmail.com"}]
+license = {file = "LICENSE"}
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+keywords = ['symmetry', 'molecules', 'chemistry']
+
+[project.urls]
+Homepage = "https://github.com/corinwagen/pymsym"
+
+[project.optional-dependencies]
+# Example of defining extra dependencies (if you have any)
+extra_deps = [
+    "numpy>=1.19.2",
+]
+
+[build-system]
+requires = ["scikit-build-core"]
+build-backend = "scikit_build_core.build"

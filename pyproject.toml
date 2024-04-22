@@ -29,3 +29,8 @@ build-backend = "scikit_build_core.build"
 [tool.cibuildwheel]
 # Disable building PyPy wheels on all platforms
 skip = "pp*"
+
+[tool.scikit-build]
+cmake-args = [
+    "-DCMAKE_INSTALL_PREFIX:PATH={$PREFIX}", # This is an illustrative example
+]

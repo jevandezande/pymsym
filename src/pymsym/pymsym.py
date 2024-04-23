@@ -11,12 +11,12 @@
 from ctypes import *
 from ctypes.util import find_library
 from copy import copy
-from . import _libmsym_install_location, export
+#from . import _libmsym_install_location, export
 
 _lib = None
 
 
-@export
+#@export
 class Error(Exception):
     def __init__(self, value, details=""):
         super().__init__(value)
@@ -36,7 +36,7 @@ except ImportError:
     np = None
 
 
-@export
+#@export
 class SymmetryOperation(Structure):
     NONE = (0,)
     HORIZONTAL = 1
@@ -106,7 +106,7 @@ class SymmetryOperation(Structure):
         return self.__str__()
 
 
-@export
+#@export
 class Element(Structure):
     _fields_ = [
         ("_id", c_void_p),
@@ -141,7 +141,7 @@ class _BasisFunctionUnion(Union):
     _fields_ = [("_rsh", _RealSphericalHarmonic)]
 
 
-@export
+#@export
 class BasisFunction(Structure):
     _fields_ = [
         ("_id", c_void_p),
@@ -169,7 +169,7 @@ class BasisFunction(Structure):
         self._name = name.encode("ascii")
 
 
-@export
+#@export
 class RealSphericalHarmonic(BasisFunction):
     def __init__(self, element=None, n=0, l=0, m=0, name=""):
         super().__init__(element=element)
@@ -240,7 +240,7 @@ class SALC(Structure):
         return self._pf_array
 
 
-@export
+#@export
 class SubrepresentationSpace(Structure):
     _fields_ = [
         ("symmetry_species", c_int),
@@ -257,12 +257,12 @@ class SubrepresentationSpace(Structure):
         return self._salcarray
 
 
-@export
+#@export
 class PartnerFunction(Structure):
     _fields_ = [("index", c_int), ("dim", c_int)]
 
 
-@export
+#@export
 class SymmetrySpecies(Structure):
     _fields_ = [("_d", c_int), ("_r", c_int), ("_name", c_char * 8)]
 
@@ -291,7 +291,7 @@ class _Thresholds(Structure):
     ]
 
 
-@export
+#@export
 class CharacterTable(Structure):
     _fields_ = [
         ("_d", c_int),
@@ -496,14 +496,16 @@ def init(library_location=None):
 
 _libmsym_location = find_library("msym")
 
-if _libmsym_location is None:
-    _libmsym_location = _libmsym_install_location
+#if _libmsym_location is None:
+#    _libmsym_location = _libmsym_install_location
 
 if _libmsym_location is not None:
     init(_libmsym_location)
+else:
+    raise RuntimeError("Can't find C library!")
 
 
-@export
+#@export
 class Context(object):
     _ctx = None
 

@@ -17,6 +17,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.17.0

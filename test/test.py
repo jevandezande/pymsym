@@ -26,4 +26,12 @@ def get_symmetry(molecule: cctk.Molecule) -> str:
 #        # incredibly, this is the desired behavior of libmsym!
 #        return "C1"
 
-print(get_symmetry(cctk.Molecule.new_from_name("water")))
+mol = cctk.Molecule.new_from_name("water")
+
+print(get_symmetry(mol))
+
+print(mol.atomic_numbers.tolist())
+print(mol.geometry.tolist())
+
+print(pymsym.get_point_group(mol.atomic_numbers.tolist(), mol.geometry.tolist()))
+print(pymsym.get_symmetry_number(mol.atomic_numbers.tolist(), mol.geometry.tolist()))

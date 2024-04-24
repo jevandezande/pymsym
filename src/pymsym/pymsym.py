@@ -13,8 +13,20 @@ from ctypes.util import find_library
 from copy import copy
 #from . import _libmsym_install_location, export
 
-_lib = None
+import os
 
+_lib = None
+_libmsym_location = None
+
+# locate c extension. i concede this is a dirty hack. ccw 4.23.24
+current_dir = os.path.dirname(__file__)
+for extension in [".so", ".dylib", ".dll"]:
+    potential_path = os.path.join(current_dir, f"libpymsym{extension}")
+    if os.path.exists(potential_path):
+        _libmsym_location = potential_path
+
+if _libmsym_location is None:
+    raise RuntimeError("Can't find C library!")
 
 #@export
 class Error(Exception):
@@ -493,17 +505,7 @@ def init(library_location=None):
         POINTER(PartnerFunction),
     ]
 
-
-_libmsym_location = find_library("msym")
-
-#if _libmsym_location is None:
-#    _libmsym_location = _libmsym_install_location
-
-if _libmsym_location is not None:
-    init(_libmsym_location)
-else:
-    raise RuntimeError("Can't find C library!")
-
+init(_libmsym_location)
 
 #@export
 class Context(object):

@@ -49,3 +49,11 @@ generate_export_header(pymsym
 
 # Ensure your C code can find generated headers
 target_include_directories(pymsym PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+# Installation path setup for skbuild
+if(SKBUILD)
+    # Install library into the Python package 'pymsym' under 'libs' subdirectory
+    install(TARGETS pymsym LIBRARY DESTINATION pymsym)
+else()
+    install(TARGETS pymsym LIBRARY DESTINATION lib)
+endif()

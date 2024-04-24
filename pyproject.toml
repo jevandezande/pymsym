@@ -28,4 +28,6 @@ build-backend = "scikit_build_core.build"
 
 [tool.cibuildwheel]
 # Disable building PyPy wheels on all platforms
+build = "cp311*"
 skip = "pp*"
+

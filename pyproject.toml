@@ -1,6 +1,6 @@
 [project]
 name = "pymsym"
-version = "0.3.2"
+version = "0.3.3"
 description = "libmsym python binding"
 authors = [{name = "Corin Wagen", email = "corinwagen@gmail.com"}]
 license = {file = "LICENSE"}
@@ -28,6 +28,6 @@ build-backend = "scikit_build_core.build"
 
 [tool.cibuildwheel]
 # Disable building PyPy wheels on all platforms
-build = "cp311*"
+#build = "cp311*"
 skip = "pp*"
 

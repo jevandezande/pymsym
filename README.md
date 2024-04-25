@@ -1,9 +1,24 @@
 # pymsym
 
+[![PyPI version](https://badge.fury.io/py/pymsym.svg)](https://pypi.python.org/pypi/pymsym/)
+<!---
+[![Downloads](https://img.shields.io/pypi/dm/pymsym.svg)](https://pypi.python.org/pypi/pymsym/)
+--->
+
 libmsym is a C library dealing with point group symmetry in molecules. pymsym is its python interface.
 
 ## about
 this library was originally developed by Marcus Johansson. the original library can be found [here](https://github.com/mcodev31/libmsym) and seems unmaintained - after reaching out to the initial authors, i've decided to fork this so i can maintain it.
+
+for more info, read [the blog post](https://corinwagen.github.io/public/blog/20240425_pymsym.html).
+
+## installation
+
+use pip:
+
+```
+pip install pymsym
+```
 
 ## api
 

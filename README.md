@@ -1,9 +1,7 @@
 # pymsym
 
 [![PyPI version](https://badge.fury.io/py/pymsym.svg)](https://pypi.python.org/pypi/pymsym/)
-<!---
 [![Downloads](https://img.shields.io/pypi/dm/pymsym.svg)](https://pypi.python.org/pypi/pymsym/)
---->
 
 libmsym is a C library dealing with point group symmetry in molecules. pymsym is its python interface.
 

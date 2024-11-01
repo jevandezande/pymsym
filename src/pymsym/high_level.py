@@ -81,7 +81,7 @@ We still cannot do ``Ih`` point groups, although I doubt this will bother anyone
 """
 
 
-def get_point_group(atomic_numbers: list[float], positions: list[list[float]]) -> str:
+def get_point_group(atomic_numbers: list[int], positions: list[list[float]]) -> str:
     assert len(atomic_numbers) > 0, "no atoms!"
     assert len(atomic_numbers) == len(positions), "len(atomic_numbers) doesn't match len(positions)"
 
@@ -91,7 +91,7 @@ def get_point_group(atomic_numbers: list[float], positions: list[list[float]]) -
     for Z in atomic_numbers:
         assert Z > 0 and Z <= 92, "only elements H–U are supported"
 
-    msym_elements = [pymsym.Element(name=elements[Z], coordinates=xyz) for Z, xyz in zip(atomic_numbers, positions)]
+    msym_elements = [pymsym.Element(name=elements[Z], coordinates=xyz) for Z, xyz in zip(atomic_numbers, positions, strict=True)]
 
     msym_basis_functions = list()
     for element in msym_elements:
@@ -116,7 +116,7 @@ def get_point_group(atomic_numbers: list[float], positions: list[list[float]]) -
     return group
 
 
-def get_symmetry_number(*args) -> int:
-    point_group = get_point_group(*args)
+def get_symmetry_number(atomic_numbers: list[int], positions: list[list[float]]) -> int:
+    point_group = get_point_group(atomic_numbers, positions)
     return SYMMNO_BY_POINT_GROUP[point_group]
 

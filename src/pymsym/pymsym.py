@@ -18,7 +18,7 @@ import numpy as np
 #from . import _libmsym_install_location, export
 
 
-_lib = None
+_lib: Any = None
 _libmsym_location = None
 
 # locate c extension. i concede this is a dirty hack. ccw 4.23.24
@@ -73,10 +73,10 @@ class SymmetryOperation(Structure):
     ]
 
     @property
-    def vector(self):
-        return self._v[0:3]
+    def vector(self) -> Any:
+        return self._v[:3]
 
-    def __str__(self):
+    def __str__(self) -> str:
         orientation = ""
         order = ""
         power = ""
@@ -111,8 +111,8 @@ class SymmetryOperation(Structure):
             + " )"
         )
 
-    def __repr__(self):
-        return self.__str__()
+    def __repr__(self) -> str:
+        return str(self)
 
 
 #@export
@@ -126,19 +126,19 @@ class Element(Structure):
     ]
 
     @property
-    def coordinates(self):
-        return self._v[0:3]
+    def coordinates(self) -> Any:
+        return self._v[:3]
 
     @coordinates.setter
-    def coordinates(self, coordinates):
+    def coordinates(self, coordinates: Any) -> None:
         self._v = (c_double * 3)(*coordinates)
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name.decode()
 
     @name.setter
-    def name(self, name):
+    def name(self, name: str) -> None:
         self._name = name.encode("ascii")
 
 
@@ -160,21 +160,21 @@ class BasisFunction(Structure):
         ("_name", c_char * 8),
     ]
 
-    def __init__(self, element=None):
+    def __init__(self, element: Any | None = None) -> None:
         if element == None:
             raise Error("Basis function requires an element")
         super().__init__()
         self.element = element
 
-    def _set_element_pointer(self, element):
+    def _set_element_pointer(self, element: Any) -> None:
         self._element = pointer(element)
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name.decode()
 
     @name.setter
-    def name(self, name):
+    def name(self, name: str) -> None:
         self._name = name.encode("ascii")
 
 
@@ -189,15 +189,15 @@ class RealSphericalHarmonic(BasisFunction):
         self.name = name
 
     @property
-    def n(self):
+    def n(self) -> int:
         return self._f._rsh.n
 
     @n.setter
-    def n(self, n):
+    def n(self, n: int) -> None:
         self._f._rsh.n = n
 
     @property
-    def l(self):
+    def l(self) -> int:
         return self._f._rsh.l
 
     @l.setter
@@ -205,7 +205,7 @@ class RealSphericalHarmonic(BasisFunction):
         self._f._rsh.l = n
 
     @property
-    def m(self):
+    def m(self) -> int:
         return self._f._rsh.m
 
     @m.setter
@@ -222,19 +222,19 @@ class SALC(Structure):
     ]
 
     _pf_array = None
-    basis_functions = []
+    basis_functions: list[Any] = []
 
-    def _update_basis_functions(self, basis_function_addresses, basis):
+    def _update_basis_functions(self, basis_function_addresses: Any, basis: Any) -> None:
         self.basis_functions = [
             basis[basis_function_addresses.index(addressof(p.contents))]
-            for p in self._f[0 : self._fl]
+            for p in self._f[:self._fl]
         ]
 
     # @property
     # def partner_functions(self):
     #    if self._pf_array is None:
     #        pf = cast(self._pf,POINTER(c_double*self._fl))
-    #        self._pf_array = [f[0:self._fl] for f in pf[0:self._d]]
+    #        self._pf_array = [f[:self._fl] for f in pf[:self._d]]
     #
     #    return self._pf_array
 
@@ -254,12 +254,12 @@ class SubrepresentationSpace(Structure):
         ("_salcs", POINTER(SALC)),
     ]
 
-    _salcarray = None
+    _salcarray: list[Any] | None = None
 
     @property
-    def salcs(self):
+    def salcs(self) -> list[Any]:
         if self._salcarray is None:
-            self._salcarray = self._salcs[0 : self._salc_length]
+            self._salcarray = self._salcs[:self._salc_length]
         return self._salcarray
 
 
@@ -273,15 +273,15 @@ class SymmetrySpecies(Structure):
     _fields_ = [("_d", c_int), ("_r", c_int), ("_name", c_char * 8)]
 
     @property
-    def dim(self):
+    def dim(self) -> int:
         return self._d
 
     @property
-    def reducible(self):
+    def reducible(self) -> bool:
         return self._r > 1
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name.decode()
 
 
@@ -321,22 +321,22 @@ class CharacterTable(Structure):
         return self._table_array
 
     @property
-    def class_count(self):
+    def class_count(self) -> Any:
         if self._class_count_array is None:
-            self._class_count_array = self._classc[0 : self._d]
+            self._class_count_array = self._classc[:self._d]
         return self._class_count_array
 
-    def _update_symmetry_operations(self, symmetry_operations):
+    def _update_symmetry_operations(self, symmetry_operations: list[Any]) -> None:
         addresses = [addressof(sop) for sop in symmetry_operations]
         self.symmetry_operations = [
             symmetry_operations[addresses.index(addressof(sop.contents))]
-            for sop in self._sops[0 : self._d]
+            for sop in self._sops[:self._d]
         ]
 
     @property
-    def symmetry_species(self):
+    def symmetry_species(self) -> list[Any]:
         if self._symmetry_species is None:
-            self._symmetry_species = self._s[0 : self._d]
+            self._symmetry_species = self._s[:self._d]
 
         return self._symmetry_species
 
@@ -362,16 +362,16 @@ class _ReturnCode(c_int):
     SYMMETRIZATION_ERROR = -17
     SUBSPACE_ERROR = -18
 
-    def __str__(self):
+    def __str__(self) -> str:
         # init is not called on the return type so we can't contruct data on creation, don't decode details here, may be too late
         error_string = _lib.msymErrorString(self.value).decode()
         return repr(error_string)
 
-    def __repr__(self):
-        return self.__str__()
+    def __repr__(self) -> str:
+        return str(self)
 
 
-def init(library_location=None):
+def init(library_location: Any | None = None) -> None:
     if library_location is None:
         raise Error("Cannot find libmsym shared library")
 
@@ -379,7 +379,7 @@ def init(library_location=None):
 
     _lib = CDLL(library_location)
 
-    _Context = POINTER(type("msym_context", (Structure,), {}))
+    _Context: Any = POINTER(type("msym_context", (Structure,), {}))
 
     _lib.msymErrorString.argtypes = [c_int]
     _lib.msymErrorString.restype = c_char_p
@@ -495,17 +495,17 @@ init(_libmsym_location)
 
 #@export
 class Context(object):
-    _ctx = None
+    _ctx: Any = None
 
-    def __init__(self, elements=[], basis_functions=[], point_group=""):
+    def __init__(self, elements: list[Any] = [], basis_functions: list[Any] = [], point_group: str = "") -> None:
         if _lib is None:
             raise Error("Shared library not loaded")
 
-        self._elements = []
-        self._basis_functions = []
-        self._point_group = None
-        self._subrepresentation_spaces = None
-        self._character_table = None
+        self._elements: list[Any] = []
+        self._basis_functions: list[Any] = []
+        self._point_group: Any = None
+        self._subrepresentation_spaces: list[Any] | None = None
+        self._character_table: Any = None
         self._ctx = _lib.msymCreateContext()
         if not self._ctx:
             raise RuntimeError("Failed to create libmsym context")
@@ -514,46 +514,50 @@ class Context(object):
         if default_thresholds is None:
             raise RuntimeError("Failed get libmsym default thresholds")
         self._thresholds = copy(default_thresholds)
-        if len(elements) > 0:
+        if elements:
             self._set_elements(elements)
-        if len(basis_functions) > 0:
+        if basis_functions:
             self._set_basis_functions(basis_functions)
-        if len(point_group) > 0:
+        if point_group:
             self._set_point_group(point_group)
             self.find_symmetry()
 
-    def __del__(self):
+        # Type hints
+        self._salcs: tuple[np.ndarray, np.ndarray, list[PartnerFunction]] | None
+        self._element_array: Array[Element] | None
+
+    def __del__(self) -> None:
         self._destruct()
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
         self._destruct()
 
-    def _destruct(self):
+    def _destruct(self) -> None:
         if self._ctx:
             _lib.msymReleaseContext(self._ctx)
         self._ctx = None
 
     @staticmethod
-    def _assert_success(error):
+    def _assert_success(error) -> None:
         if not error.value == _ReturnCode.SUCCESS:
             raise Error(error, details=_lib.msymGetErrorDetails().decode())
 
-    def _get_basis_function_addresses(self):
+    def _get_basis_function_addresses(self) -> list[Any]:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         cbfs = POINTER(BasisFunction)()
         csize = c_int(0)
         self._assert_success(
             _lib.msymGetBasisFunctions(self._ctx, byref(csize), byref(cbfs))
         )
-        return [addressof(bf) for bf in cbfs[0 : csize.value]]
+        return [addressof(bf) for bf in cbfs[:csize.value]]
 
-    def _set_elements(self, elements):
+    def _set_elements(self, elements: list[Any]) -> None:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         self._subrepresentation_spaces = None
         self._character_table = None
         self._salcs = None
@@ -564,9 +568,9 @@ class Context(object):
         self._element_array = element_array
         self._elements = elements
 
-    def _set_point_group(self, point_group):
+    def _set_point_group(self, point_group: str) -> None:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         self._subrepresentation_spaces = None
         self._character_table = None
         self._salcs = None
@@ -574,15 +578,15 @@ class Context(object):
         self._assert_success(_lib.msymSetPointGroupByName(self._ctx, cname))
         self._update_symmetry_operations()
 
-    def _set_basis_functions(self, basis_functions):
+    def _set_basis_functions(self, basis_functions: list[Any]) -> None:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         self._subrepresentation_spaces = None
         self._salcs = None
         size = len(basis_functions)
         for bf in basis_functions:
             bf._set_element_pointer(
-                self._element_array[self._elements.index(bf.element)]
+                self._element_array[self._elements.index(bf.element)]  # type: ignore [index]
             )
 
         self._assert_success(
@@ -595,46 +599,46 @@ class Context(object):
             self._update_symmetry_operations()
             self._update_character_table()
 
-    def _update_elements(self):
+    def _update_elements(self) -> None:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         celements = POINTER(Element)()
         csize = c_int(0)
         self._assert_success(
             _lib.msymGetElements(self._ctx, byref(csize), byref(celements))
         )
         self._elements_array = celements
-        self._elements = celements[0 : csize.value]
+        self._elements = celements[:csize.value]
 
-    def _update_symmetry_operations(self):
+    def _update_symmetry_operations(self) -> None:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         csops = POINTER(SymmetryOperation)()
         csize = c_int(0)
         self._assert_success(
             _lib.msymGetSymmetryOperations(self._ctx, byref(csize), byref(csops))
         )
-        self._symmetry_operations = csops[0 : csize.value]
+        self._symmetry_operations = csops[:csize.value]
 
-    def _update_point_group(self):
+    def _update_point_group(self) -> None:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         cname = (c_char * 8)()
         self._assert_success(
             _lib.msymGetPointGroupName(self._ctx, sizeof(cname), cname)
         )
         self._point_group = cname.value.decode()
 
-    def _update_subrepresentation_spaces(self):
+    def _update_subrepresentation_spaces(self) -> None:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         basis_function_addresses = self._get_basis_function_addresses()
         csrs = POINTER(SubrepresentationSpace)()
         csize = c_int(0)
         self._assert_success(
             _lib.msymGetSubrepresentationSpaces(self._ctx, byref(csize), byref(csrs))
         )
-        srs = csrs[0 : csize.value]
+        srs = csrs[:csize.value]
         for s in srs:
             for salc in s.salcs:
                 salc._update_basis_functions(
@@ -642,19 +646,17 @@ class Context(object):
                 )
         self._subrepresentation_spaces = srs
 
-    def _update_character_table(self):
+    def _update_character_table(self) -> None:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         cct = POINTER(CharacterTable)()
         self._assert_success(_lib.msymGetCharacterTable(self._ctx, byref(cct)))
         self._character_table = cct.contents
         self._character_table._update_symmetry_operations(self._symmetry_operations)
 
-    def _update_salcs(self):
+    def _update_salcs(self) -> None:
         if not self._ctx:
-            raise RuntimeError
-        if np is None:
-            raise ImportError("numpy is not available.")
+            raise RuntimeError("Context not initialized")
         csize = len(self._basis_functions)
         partner_functions = (PartnerFunction * csize)()
         salcs = np.zeros((csize, csize), dtype=np.float64)
@@ -662,9 +664,9 @@ class Context(object):
         self._assert_success(
             _lib.msymGetSALCs(self._ctx, csize, salcs, species, partner_functions)
         )
-        self._salcs = (salcs, species, partner_functions[0:csize])
+        self._salcs = (salcs, species, partner_functions[:csize])
 
-    def set_thresholds(self, **kwargs):
+    def set_thresholds(self, **kwargs: Any) -> None:
         for key in kwargs.keys():
             if key not in [
                 "zero",
@@ -682,87 +684,85 @@ class Context(object):
         )
 
     @property
-    def elements(self):
+    def elements(self) -> list[Any]:
         return self._elements
 
     @elements.setter
-    def elements(self, elements):
+    def elements(self, elements: list[Any]) -> None:
         self._set_elements(elements)
 
     @property
-    def basis_functions(self):
+    def basis_functions(self) -> list[Any]:
         return self._basis_functions
 
     @basis_functions.setter
-    def basis_functions(self, basis_functions):
+    def basis_functions(self, basis_functions: list[Any]) -> None:
         self._set_basis_functions(basis_functions)
 
     @property
-    def point_group(self):
+    def point_group(self) -> str:
         return self._point_group
 
     @point_group.setter
-    def point_group(self, point_group):
+    def point_group(self, point_group: str) -> None:
         self._set_point_group(point_group)
 
     @property
-    def symmetry_operations(self):
+    def symmetry_operations(self) -> list[Any]:
         return self._symmetry_operations
 
-    def find_symmetry(self):
+    def find_symmetry(self) -> str:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         self._assert_success(_lib.msymFindSymmetry(self._ctx))
         self._update_point_group()
         self._update_symmetry_operations()
         return self._point_group
 
-    def symmetrize_elements(self):
+    def symmetrize_elements(self) -> list[Any]:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         cerror = c_double(0)
         self._assert_success(_lib.msymSymmetrizeElements(self._ctx, byref(cerror)))
         self._update_elements()
         return self._elements
 
-    def align_axes(self):
+    def align_axes(self) -> list[Any]:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         cerror = c_double(0)
         self._assert_success(_lib.msymAlignAxes(self._ctx))
         self._update_elements()
         return self._elements
 
     @property
-    def subrepresentation_spaces(self):
+    def subrepresentation_spaces(self) -> list[Any] | None:
         if self._subrepresentation_spaces is None:
             self._update_subrepresentation_spaces()
 
         return self._subrepresentation_spaces
 
     @property
-    def character_table(self):
+    def character_table(self) -> Any:
         if self._character_table is None:
             self._update_character_table()
 
         return self._character_table
 
     @property
-    def salcs(self):
+    def salcs(self) -> Any:
         if self._salcs is None:
             self._update_salcs()
 
         return self._salcs
 
-    def symmetrize_wavefunctions(self, m):
+    def symmetrize_wavefunctions(self, m: Any) -> tuple[Any, Any, Any]:
         if not self._ctx:
-            raise RuntimeError
-        if np is None:
-            raise ImportError("numpy is not available.")
+            raise RuntimeError("Context not initialized")
         csize = len(self._basis_functions)
         (d1, d2) = m.shape
         if not (d1 == csize and d2 == csize):
-            raise ValueError("Must provide a " + str(csize) + "x" + str(csize))
+            raise ValueError(f"Must provide a {csize}x{csize}")
         wf = np.ascontiguousarray(m, dtype=np.float64)
         partner_functions = (PartnerFunction * csize)()
         species = np.zeros((csize), dtype=np.int32)
@@ -771,11 +771,11 @@ class Context(object):
                 self._ctx, csize, wf, species, partner_functions
             )
         )
-        return (wf, species, partner_functions[0:csize])
+        return (wf, species, partner_functions[:csize])
 
-    def generate_elements(self, elements):
+    def generate_elements(self, elements: list[Any]) -> list[Any]:
         if not self._ctx:
-            raise RuntimeError
+            raise RuntimeError("Context not initialized")
         self._subrepresentation_spaces = None
         self._character_table = None
         self._salcs = None
@@ -788,12 +788,10 @@ class Context(object):
         self._update_elements()
         return self._elements
 
-    def symmetry_species_components(self, wf):
+    def symmetry_species_components(self, wf: Any) -> Any:
         wf_size = len(wf)
-        if not wf_size == len(self.basis_functions):
-            raise ValueError(
-                "Must provide an array of length " + str(len(self.basis_functions))
-            )
+        if wf_size != len(self.basis_functions):
+            raise ValueError(f"Must provide an array of length {len(self.basis_functions)}")
         species_size = self.character_table._d
         species = np.zeros((species_size), dtype=np.float64)
         wf = np.ascontiguousarray(wf, dtype=np.float64)

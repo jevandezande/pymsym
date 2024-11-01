@@ -19,8 +19,6 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/corinwagen/pymsym"
 
-
-[build-system]
 requires = ["scikit-build-core"]
 build-backend = "scikit_build_core.build"
 
@@ -28,4 +26,3 @@ build-backend = "scikit_build_core.build"
 # Disable building PyPy wheels on all platforms
 #build = "cp311*"
 skip = "pp*"
-

@@ -1,17 +1,17 @@
 import pymsym
-import cctk
+import cctk  # type: ignore [import-untyped]
 
 from pymsym.pymsym import Element
 
 def get_symmetry(molecule: cctk.Molecule) -> str:
-    msym_elements = list()
+    msym_elements = []
     for i in range(1, molecule.num_atoms() + 1):
         msym_elements.append(pymsym.Element(
             name=cctk.helper_functions.get_symbol(molecule.atomic_numbers[i]),
             coordinates=molecule.geometry[i].tolist(),
         ))
 
-    msym_basis_functions = list()
+    msym_basis_functions = []
     for element in msym_elements:
         bfs = [pymsym.RealSphericalHarmonic(element=element, n=2, l=1, m=m, name=f"p{m+1}") for m in (-1, 0, 1)]
         element.basis_functions = bfs

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import libmsym as msym, numpy as np, argparse, random, sys
+import libmsym as msym, numpy as np, argparse, random, sys  # type: ignore [import-not-found]
 
 
 def read_xyz(fin):

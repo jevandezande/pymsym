@@ -204,16 +204,16 @@ class RealSphericalHarmonic(BasisFunction):
         return self._f._rsh.l
 
     @l.setter
-    def l(self, n):
-        self._f._rsh.n = l
+    def l(self, n: int) -> None:
+        self._f._rsh.l = n
 
     @property
     def m(self):
         return self._f._rsh.m
 
     @m.setter
-    def m(self, n):
-        self._f._rsh.n = m
+    def m(self, n: int) -> None:
+        self._f._rsh.m = n
 
 
 class SALC(Structure):

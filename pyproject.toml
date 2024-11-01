@@ -11,16 +11,14 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 keywords = ['symmetry', 'molecules', 'chemistry']
-requires-python = ">=3.9"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.8",
+]
 
 [project.urls]
 Homepage = "https://github.com/corinwagen/pymsym"
 
-[project.optional-dependencies]
-# Example of defining extra dependencies (if you have any)
-extra_deps = [
-    "numpy>=1.19.2",
-]
 
 [build-system]
 requires = ["scikit-build-core"]

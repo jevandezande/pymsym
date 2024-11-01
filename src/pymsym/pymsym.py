@@ -11,9 +11,12 @@
 from ctypes import *
 from ctypes.util import find_library
 from copy import copy
+import os
+from typing import Any, Self
+
+import numpy as np
 #from . import _libmsym_install_location, export
 
-import os
 
 _lib = None
 _libmsym_location = None
@@ -40,12 +43,6 @@ class Error(Exception):
 
     def __repr__(self):
         return self.__str__()
-
-
-try:
-    import numpy as np
-except ImportError:
-    np = None
 
 
 #@export
@@ -242,10 +239,7 @@ class SALC(Structure):
     #    return self._pf_array
 
     @property
-    def partner_functions(self):
-        if np is None:
-            raise ImportError("numpy is not available.")
-
+    def partner_functions(self) -> Any:
         if self._pf_array is None:
             self._pf_array = np.ctypeslib.as_array(self._pf, shape=(self._d, self._fl))
 
@@ -318,10 +312,7 @@ class CharacterTable(Structure):
     _symmetry_species = None
 
     @property
-    def table(self):
-        if np is None:
-            raise ImportError("numpy is not available.")
-
+    def table(self) -> Any:
         if self._table_array is None:
             self._table_array = np.ctypeslib.as_array(
                 self._table, shape=(self._d, self._d)
@@ -463,20 +454,15 @@ def init(library_location=None):
     _lib.msymGetCharacterTable.restype = _ReturnCode
     _lib.msymGetCharacterTable.argtypes = [_Context, POINTER(POINTER(CharacterTable))]
 
-    if np is None:
-        _SALCsMatrix = c_void_p
-        _SALCsSpecies = POINTER(c_int)
-        _NPDArray = POINTER(c_double)
-    else:
-        _SALCsMatrix = np.ctypeslib.ndpointer(
-            dtype=np.float64, ndim=2, flags="C_CONTIGUOUS"
-        )
-        _SALCsSpecies = np.ctypeslib.ndpointer(
-            dtype=np.int32, ndim=1, flags="C_CONTIGUOUS"
-        )
-        _NPDArray = np.ctypeslib.ndpointer(
-            dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"
-        )
+    _SALCsMatrix = np.ctypeslib.ndpointer(
+        dtype=np.float64, ndim=2, flags="C_CONTIGUOUS"
+    )
+    _SALCsSpecies = np.ctypeslib.ndpointer(
+        dtype=np.int32, ndim=1, flags="C_CONTIGUOUS"
+    )
+    _NPDArray = np.ctypeslib.ndpointer(
+        dtype=np.float64, ndim=1, flags="C_CONTIGUOUS"
+    )
 
     _lib.msymSymmetrySpeciesComponents.restype = _ReturnCode
     _lib.msymSymmetrySpeciesComponents.argtypes = [
